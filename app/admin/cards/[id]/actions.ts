@@ -1,17 +1,12 @@
 'use server';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { Brand } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { cardInputSchema } from '@/lib/admin-schemas';
 import { deleteCardPhoto } from '@/lib/blob';
+import { parseList, brandEnum } from '@/lib/form-utils';
 
 type State = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> };
-
-function parseList(s: string | null): string[] {
-  if (!s) return [];
-  return s.split(',').map((x) => x.trim()).filter(Boolean);
-}
 
 export async function updateCardAction(id: string, _prev: State, fd: FormData): Promise<State> {
   const raw = {
@@ -49,7 +44,7 @@ export async function updateCardAction(id: string, _prev: State, fd: FormData): 
   }
 
   try {
-    const brand: Brand | null = parsed.data.brand === 'force-ai' ? Brand.force_ai : parsed.data.brand === 'force-media' ? Brand.force_media : null;
+    const brand = brandEnum(parsed.data.brand);
     const row = { ...parsed.data, brand };
     const card = await prisma.card.update({ where: { id }, data: row });
     revalidatePath(`/${card.slug}`);
