@@ -1,0 +1,34 @@
+name: neon-snapshot
+on:
+  push:
+    branches: [main]
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Neon branch from prod
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
+          GIT_SHA: ${{ github.sha }}
+        run: |
+          if [ -z "$NEON_API_KEY" ] || [ -z "$NEON_PROJECT_ID" ]; then
+            echo "NEON_API_KEY or NEON_PROJECT_ID not set; skipping snapshot."
+            exit 0
+          fi
+          SHORT=$(echo "$GIT_SHA" | cut -c1-8)
+          BRANCH="prod-${SHORT}"
+          npm i -g neonctl
+          # Create branch (idempotent — already-exists is acceptable)
+          neonctl branches create --project-id "$NEON_PROJECT_ID" --name "$BRANCH" --parent main 2>&1 || echo "branch create result: $? (already-exists is fine)"
+          # Prune: keep newest 8 prod-* branches.
+          # Free tier cap = 10 branches. main + preview = 2 permanent → 8 snapshot slots max.
+          neonctl branches list --project-id "$NEON_PROJECT_ID" --output json | \
+            jq -r '.[].name' | grep -E '^prod-' | sort -r | tail -n +9 | \
+            while read -r old; do
+              echo "pruning $old"
+              neonctl branches delete --project-id "$NEON_PROJECT_ID" "$old" 2>&1 || true
+            done
+          echo "snapshot created: $BRANCH"
+          neonctl branches list --project-id "$NEON_PROJECT_ID" --output json | jq -r '.[] | "\(.name) (\(.created_at))"' | head -15
