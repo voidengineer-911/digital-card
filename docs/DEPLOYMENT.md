@@ -1,5 +1,12 @@
 # Deployment
 
+## Live URLs
+
+- **Production:** https://digital-card-pi-seven.vercel.app
+- Inspect (Vercel dashboard): https://vercel.com/ahmad-sharafs-projects/digital-card
+- Repo: https://github.com/ForceAI-KW/digital-card
+- First deployed: 2026-05-21
+
 ## Vercel (Hobby plan)
 1. Verify git author email for this repo:
    ```
