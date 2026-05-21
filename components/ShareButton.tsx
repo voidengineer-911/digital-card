@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ActionButton } from './ActionButton';
-import type { Template } from '@/data/cards/_types';
+import type { Template } from '@/lib/types';
 
 type Props = { url: string; title: string; template: Template; label?: string };
 

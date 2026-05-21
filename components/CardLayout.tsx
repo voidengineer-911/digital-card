@@ -1,4 +1,4 @@
-import type { Card } from '@/data/cards/_types';
+import type { Card } from '@/lib/types';
 import { NardoLux } from './templates/NardoLux';
 import { ForceBrand } from './templates/ForceBrand';
 import { LocaleProvider } from '@/lib/locale-context';

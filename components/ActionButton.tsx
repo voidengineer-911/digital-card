@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Template } from '@/data/cards/_types';
+import type { Template } from '@/lib/types';
 
 type Variant = 'primary' | 'secondary' | 'small';
 

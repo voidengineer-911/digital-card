@@ -1,5 +1,5 @@
 'use client';
-import type { Card } from '@/data/cards/_types';
+import type { Card } from '@/lib/types';
 import { ActionButton } from '@/components/ActionButton';
 import { Photo } from '@/components/Photo';
 import { SocialIconRow } from '@/components/SocialIconRow';
@@ -44,7 +44,7 @@ export function NardoLux({ card, url }: Props) {
           className="relative w-24 h-24 mb-6 rounded-full overflow-hidden flex items-center justify-center"
           style={{ backgroundColor: 'rgba(104,106,108,0.06)', border: `1.5px solid ${NARDO}` }}
         >
-          <Photo src={card.photo} alt={c.name} size={96} rounded="full" />
+          <Photo src={card.photoUrl} alt={c.name} size={96} rounded="full" />
         </div>
 
         {/* Name — serif italic large */}

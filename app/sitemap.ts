@@ -1,13 +1,13 @@
 import type { MetadataRoute } from 'next';
-import { listCardSlugs } from '@/data/cards';
+import { prisma } from '@/lib/prisma';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? '';
-  const now = new Date().toISOString();
-  return listCardSlugs().map((slug) => ({
-    url: `${base}/${slug}`,
-    lastModified: now,
+  const rows = await prisma.card.findMany({ select: { slug: true, updatedAt: true } });
+  return rows.map((r) => ({
+    url: `${base}/${r.slug}`,
+    lastModified: r.updatedAt.toISOString(),
     changeFrequency: 'monthly',
-    priority: slug === 'ahmad' ? 1.0 : 0.7,
+    priority: r.slug === 'ahmad' ? 1.0 : 0.7,
   }));
 }

@@ -15,8 +15,32 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
 import { uploadCardPhoto } from '../lib/blob';
-import { ahmad } from '../data/cards/ahmad';
-import { ahmadFm } from '../data/cards/ahmad-fm';
+
+// Inline card data — data/cards/ directory has been deleted after seeding.
+type SeedCard = {
+  slug: string; template: 'lux' | 'force'; brand?: 'force-ai' | 'force-media';
+  defaultLocale: 'en' | 'ar';
+  en: { name: string; title: string }; ar: { name: string; title: string };
+  contact: { phone?: string; phoneDisplay?: string; whatsapp?: string; emails: string[]; websites?: string[] };
+  socials: { instagram?: string; linkedin?: string; x?: string; github?: string; youtube?: string; tiktok?: string };
+  copyrightYear: number;
+};
+const ahmad: SeedCard = {
+  slug: 'ahmad', template: 'lux', defaultLocale: 'en',
+  en: { name: 'Ahmad Sharaf', title: 'Founder and CEO · Force AI' },
+  ar: { name: 'احمد شرف',    title: 'المؤسس والرئيس التنفيذي · فورس إيه آي' },
+  contact: { phone: '+96541169141', phoneDisplay: '+965 4116 9141', whatsapp: '+96541169141', emails: ['ahmed0montaser@gmail.com'], websites: ['forcemediakw.com', 'force-ai.com', 'store.forcemediakw.com'] },
+  socials: { linkedin: 'a7xq8', github: 'ForceAI-KW' },
+  copyrightYear: 2026,
+};
+const ahmadFm: SeedCard = {
+  slug: 'ahmad-fm', template: 'force', brand: 'force-media', defaultLocale: 'en',
+  en: { name: 'Ahmad Sharaf', title: 'Ops Manager & AI Engineer' },
+  ar: { name: 'احمد شرف',    title: 'مدير العمليات ومهندس ذكاء اصطناعي' },
+  contact: { phone: '+96541169141', phoneDisplay: '+965 4116 9141', whatsapp: '+96541169141', emails: ['ahmed0montaser@gmail.com'], websites: ['forcemediakw.com', 'store.forcemediakw.com'] },
+  socials: { linkedin: 'a7xq8', github: 'ForceAI-KW' },
+  copyrightYear: 2026,
+};
 
 const { Client } = pg;
 

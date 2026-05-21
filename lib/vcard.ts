@@ -1,6 +1,4 @@
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import type { Card } from '@/data/cards/_types';
+import type { Card } from '@/lib/types';
 
 const CRLF = '\r\n';
 
@@ -39,6 +37,19 @@ function foldLine(line: string): string {
   return parts.join(CRLF);
 }
 
+async function fetchPhotoBase64(url: string): Promise<string | null> {
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length > 100 * 1024) return null;
+    return buf.toString('base64');
+  } catch {
+    return null;
+  }
+}
+
 export async function buildVCard(card: Card): Promise<string> {
   const { given, family } = splitName(card.en.name);
   const { title, org } = splitTitleOrg(card.en.title);
@@ -49,15 +60,20 @@ export async function buildVCard(card: Card): Promise<string> {
   if (org)   lines.push(`ORG:${escape(org)}`);
   if (title) lines.push(`TITLE:${escape(title)}`);
 
-  // PHOTO — read from filesystem, base64-encode, fold per RFC 2425/2426
-  if (card.photo) {
-    try {
-      const photoPath = join(process.cwd(), 'public', card.photo);
-      const photoBuffer = await readFile(photoPath);
-      const b64 = photoBuffer.toString('base64');
-      lines.push(foldLine(`PHOTO;ENCODING=b;TYPE=JPEG:${b64}`));
-    } catch {
-      // Photo file missing or unreadable — silently skip
+  // PHOTO — fetch from Blob URL, base64-encode, fold per RFC 2425/2426
+  const photoBase64 = await fetchPhotoBase64(card.photoUrl);
+  if (photoBase64) {
+    const line = 'PHOTO;ENCODING=b;TYPE=JPEG:' + photoBase64;
+    if (line.length <= 75) {
+      lines.push(line);
+    } else {
+      const folded: string[] = [];
+      let i = 0;
+      while (i < line.length) {
+        folded.push((i === 0 ? '' : ' ') + line.slice(i, i + 75));
+        i += 75;
+      }
+      lines.push(folded.join(CRLF));
     }
   }
 

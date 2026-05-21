@@ -1,4 +1,4 @@
-import type { Card } from '@/data/cards/_types';
+import type { Card } from '@/lib/types';
 
 type Props = { card: Card; url: string };
 
@@ -25,17 +25,8 @@ function buildSchema(card: Card, url: string) {
     name: c.name,
     alternateName: card.ar.name,
     jobTitle,
-    // Strip the slug path from `url` to get the site origin, then append the
-    // card.photo path. Avoids duplicating the slug in the image URL
-    // (e.g. `https://x/ahmad/photos/...` → `https://x/photos/...`).
-    image: (() => {
-      try {
-        const u = new URL(url);
-        return `${u.origin}${card.photo}`;
-      } catch {
-        return card.photo;
-      }
-    })(),
+    // photoUrl is an absolute Blob URL — use it directly.
+    image: card.photoUrl,
     url,
     email: card.contact.emails[0],
     sameAs,

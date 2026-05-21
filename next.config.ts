@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 
 const csp = [
   "default-src 'self'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   "script-src 'self' 'unsafe-inline'",
@@ -15,6 +15,9 @@ const csp = [
 const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
+    remotePatterns: [
+      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com', pathname: '/**' },
+    ],
   },
   async headers() {
     return [

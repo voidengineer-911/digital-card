@@ -1,6 +1,29 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { buildVCard } from '../vcard';
-import { ahmad } from '@/data/cards/ahmad';
+import type { Card } from '@/lib/types';
+
+const ahmad: Card = {
+  slug: 'ahmad',
+  template: 'lux',
+  defaultLocale: 'en',
+  en: { name: 'Ahmad Sharaf', title: 'Founder and CEO · Force AI' },
+  ar: { name: 'احمد شرف',    title: 'المؤسس والرئيس التنفيذي · فورس إيه آي' },
+  photoUrl: 'https://example.invalid/p.jpg',
+  contact: {
+    phone: '+96541169141', phoneDisplay: '+965 4116 9141', whatsapp: '+96541169141',
+    emails: ['ahmed0montaser@gmail.com'],
+    websites: ['forcemediakw.com', 'force-ai.com', 'store.forcemediakw.com'],
+  },
+  socials: { linkedin: 'a7xq8', github: 'ForceAI-KW' },
+  copyrightYear: 2026,
+};
+
+beforeEach(() => {
+  global.fetch = vi.fn(async () => ({
+    ok: true,
+    arrayBuffer: async () => new Uint8Array([0xff, 0xd8, 0xff]).buffer,
+  } as Response));
+});
 
 describe('buildVCard', () => {
   it('emits VERSION 3.0', async () => {
@@ -40,8 +63,7 @@ describe('buildVCard', () => {
     expect(v.startsWith('BEGIN:VCARD\r\n')).toBe(true);
     expect(v.trimEnd().endsWith('END:VCARD')).toBe(true);
   });
-  it('emits PHOTO line when photo file exists', async () => {
-    // public/photos/ahmad.jpg exists per project setup
+  it('emits PHOTO line when photoUrl is fetchable', async () => {
     const v = await buildVCard(ahmad);
     expect(v).toMatch(/^PHOTO;ENCODING=b;TYPE=JPEG:/m);
   });

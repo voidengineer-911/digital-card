@@ -1,5 +1,5 @@
 'use client';
-import type { Card } from '@/data/cards/_types';
+import type { Card } from '@/lib/types';
 import { ActionButton } from '@/components/ActionButton';
 import { Photo } from '@/components/Photo';
 import { SocialIconRow } from '@/components/SocialIconRow';
@@ -46,7 +46,7 @@ export function ForceBrand({ card, url }: Props) {
         </div>
 
         <div className="relative w-24 h-24 mb-6 rounded-[12px] overflow-hidden flex items-center justify-center" style={{ border: `2px solid ${ORANGE}` }}>
-          <Photo src={card.photo} alt={c.name} size={96} rounded="rounded" />
+          <Photo src={card.photoUrl} alt={c.name} size={96} rounded="rounded" />
         </div>
 
         <h1 className="font-sans font-bold text-[36px] leading-[1.05] tracking-[-0.01em] mb-2 text-center" style={{ color: CREAM }}>

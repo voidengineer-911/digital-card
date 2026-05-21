@@ -1,4 +1,4 @@
-import type { CardSocials } from '@/data/cards/_types';
+import type { CardSocials } from '@/lib/types';
 
 type Props = { socials: CardSocials; color: string };
 
