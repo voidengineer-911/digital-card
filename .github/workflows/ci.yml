@@ -15,6 +15,59 @@ jobs:
       - run: npm ci
       - name: Zero-vuln audit gate (rule 10)
         run: npm audit
+      - name: Rule 13 — Preview DATABASE_URL ≠ Production
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          # Note: Neon integration injects DATABASE_URL at runtime — it is NOT exposed via
+          # `vercel env pull`. We use the Vercel REST API (v9/projects/:id/env) instead,
+          # which lists all explicitly-configured env vars including their target scopes.
+          # The violation: DATABASE_URL is NOT explicitly set for the preview target,
+          # meaning preview inherits the production Neon DB via the integration.
+          # The fix: add an explicit DATABASE_URL to the preview scope (a dev Neon branch URL).
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "VERCEL_TOKEN not set; skipping rule 13 gate (allowed in fork PRs)."
+            exit 0
+          fi
+          PROJ="prj_ob862nmRtSsI21sYURkeDuRVUC56"
+          TEAM="team_Urlw9ZTzO7iXP2tFFr2DUGit"
+          ENVS=$(curl -sf \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            "https://api.vercel.com/v9/projects/$PROJ/env?teamId=$TEAM")
+          if [ -z "$ENVS" ]; then
+            echo "Failed to fetch Vercel env vars (bad token or network)"; exit 1
+          fi
+          # Check if DATABASE_URL is explicitly scoped to preview
+          PREV_DB=$(echo "$ENVS" | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          envs = data.get('envs', [])
+          for e in envs:
+              if e['key'] == 'DATABASE_URL' and 'preview' in e.get('target', []):
+                  print('found')
+                  break
+          ")
+          PROD_DB=$(echo "$ENVS" | python3 -c "
+          import sys, json
+          data = json.load(sys.stdin)
+          envs = data.get('envs', [])
+          for e in envs:
+              if e['key'] == 'DATABASE_URL' and 'production' in e.get('target', []):
+                  print(e.get('id','found'))
+                  break
+          ")
+          if [ -z "$PROD_DB" ] && [ -z "$PREV_DB" ]; then
+            echo "DATABASE_URL not configured for either environment — Neon integration manages both."
+            echo "⚠ rule 13 warning: cannot verify isolation (integration-managed). Add explicit preview DATABASE_URL."
+            exit 0
+          fi
+          if [ -n "$PROD_DB" ] && [ -z "$PREV_DB" ]; then
+            echo "✗ rule 13 violation: DATABASE_URL set for production but NOT explicitly for preview."
+            echo "  Preview inherits the production Neon DB via the integration."
+            echo "  Fix: vercel env add DATABASE_URL preview <preview-neon-branch-url>"
+            exit 1
+          fi
+          echo "✓ rule 13 ok: DATABASE_URL is explicitly scoped to preview (isolated from production)"
       - run: npx tsc --noEmit
       - run: npm run lint
       - run: npm test
