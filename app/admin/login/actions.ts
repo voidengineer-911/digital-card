@@ -7,6 +7,8 @@ import { check as rateCheck } from '@/lib/rate-limit';
 type State = { error?: string };
 
 export async function loginAction(_prev: State, fd: FormData): Promise<State> {
+  // x-forwarded-for: on Vercel, the first value is the true client IP (Vercel
+  // strips untrusted forwarded headers at the edge). Safe to use as rate-limit key.
   const ip = (await headers()).get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
   if (!rateCheck(`login:${ip}`, 5, 15 * 60 * 1000)) {
     return { error: 'Too many attempts. Wait 15 minutes.' };
@@ -28,6 +30,8 @@ export async function loginAction(_prev: State, fd: FormData): Promise<State> {
     maxAge: 8 * 60 * 60,
   });
 
-  const from = (fd.get('from') ?? '/admin').toString() || '/admin';
+  // Sanitize redirect target: must be same-origin absolute path (starts with / but not //)
+  const raw = (fd.get('from') ?? '').toString();
+  const from = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/admin';
   redirect(from);
 }
