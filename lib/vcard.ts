@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import type { Card } from '@/data/cards/_types';
 
 const CRLF = '\r\n';
@@ -22,7 +24,22 @@ function splitTitleOrg(title: string): { title: string; org?: string } {
   return { title: m[1].trim(), org: m[2].trim() };
 }
 
-export function buildVCard(card: Card): string {
+/**
+ * Fold a long vCard line per RFC 2425/2426: CRLF + space every 75 chars.
+ * The continuation space is counted as part of the next segment.
+ */
+function foldLine(line: string): string {
+  if (line.length <= 75) return line;
+  const parts: string[] = [];
+  let i = 0;
+  while (i < line.length) {
+    parts.push((i === 0 ? '' : ' ') + line.slice(i, i + 75));
+    i += 75;
+  }
+  return parts.join(CRLF);
+}
+
+export async function buildVCard(card: Card): Promise<string> {
   const { given, family } = splitName(card.en.name);
   const { title, org } = splitTitleOrg(card.en.title);
   const lines: string[] = ['BEGIN:VCARD', 'VERSION:3.0'];
@@ -31,6 +48,18 @@ export function buildVCard(card: Card): string {
   lines.push(`FN:${escape(card.en.name)}`);
   if (org)   lines.push(`ORG:${escape(org)}`);
   if (title) lines.push(`TITLE:${escape(title)}`);
+
+  // PHOTO — read from filesystem, base64-encode, fold per RFC 2425/2426
+  if (card.photo) {
+    try {
+      const photoPath = join(process.cwd(), 'public', card.photo);
+      const photoBuffer = await readFile(photoPath);
+      const b64 = photoBuffer.toString('base64');
+      lines.push(foldLine(`PHOTO;ENCODING=b;TYPE=JPEG:${b64}`));
+    } catch {
+      // Photo file missing or unreadable — silently skip
+    }
+  }
 
   if (card.contact.phone) {
     lines.push(`TEL;TYPE=CELL,VOICE:${card.contact.phone}`);
