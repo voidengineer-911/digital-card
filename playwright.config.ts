@@ -20,5 +20,11 @@ export default defineConfig({
       NEXT_PUBLIC_SITE_URL: 'http://localhost:3001',
     },
   },
-  use: { baseURL: 'http://localhost:3001' },
+  use: {
+    baseURL: 'http://localhost:3001',
+    // Give server actions and Neon queries room to breathe in CI
+    actionTimeout: 30_000,
+    navigationTimeout: 60_000,
+  },
+  timeout: 90_000,
 });
