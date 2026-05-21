@@ -1,6 +1,7 @@
 'use client';
 import { useFormState, useFormStatus } from 'react-dom';
 import Link from 'next/link';
+import { PhotoDropzone } from './PhotoDropzone';
 
 type Action = (prev: ActionState, fd: FormData) => Promise<ActionState>;
 type ActionState = { ok?: boolean; error?: string; fieldErrors?: Record<string, string> };
@@ -88,7 +89,7 @@ export function CardForm({ initial = {}, action, submitLabel }: Props) {
 
       <hr className="border-0 h-px" style={{ backgroundColor: 'rgba(104,106,108,0.20)' }} />
       <h2 className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#686A6C' }}>Photo</h2>
-      {field('photoUrl', 'Photo URL (Task 7 swaps this for an uploader)', initial.photoUrl, 'url', fe.photoUrl)}
+      <PhotoDropzone slug={initial.slug ?? ''} initialUrl={initial.photoUrl} />
 
       <hr className="border-0 h-px" style={{ backgroundColor: 'rgba(104,106,108,0.20)' }} />
       <h2 className="text-[12px] uppercase tracking-[0.12em]" style={{ color: '#686A6C' }}>Contact</h2>

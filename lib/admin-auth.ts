@@ -45,3 +45,12 @@ export async function verifySession(token: string | undefined): Promise<boolean>
     return false;
   }
 }
+
+import { cookies } from 'next/headers';
+
+export async function requireAdmin(): Promise<void> {
+  const token = (await cookies()).get('admin_session')?.value;
+  if (!await verifySession(token)) {
+    throw new Error('UNAUTHORIZED');
+  }
+}
