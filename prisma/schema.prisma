@@ -46,6 +46,4 @@ model Card {
   copyrightYear Int      @default(2026)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
-  @@index([slug])
 }
