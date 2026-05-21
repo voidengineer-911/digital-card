@@ -13,6 +13,7 @@ import { useLocale } from '@/lib/locale-context';
 
 const ORANGE = '#FF7700';
 const CREAM  = '#ECECEC';
+const WINE   = '#2D1418';
 
 const BRAND_LABEL = {
   'force-ai':    { wordmark: 'FORCE AI',    footerOrg: 'Force AI · Kuwait' },
@@ -67,7 +68,8 @@ export function ForceBrand({ card, url }: Props) {
             variant="primary"
             template="force"
             label={t('SAVE_TO_CONTACTS', locale)}
-            icon={<DownloadIcon color="#2D1418" />}
+            ariaLabel={`Download contact card for ${c.name}`}
+            icon={<DownloadIcon color={WINE} />}
             href={`/${card.slug}/contact.vcf`}
           />
         </div>

@@ -29,6 +29,15 @@ function CloseIcon({ size = 20, color = 'currentColor' }: { size?: number; color
 export function QRModal({ url, template, label = 'QR CODE' }: Props) {
   const [open, setOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const closeRef  = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    // Capture the element that was focused before the modal opened, restore on close.
+    const prev = document.activeElement as HTMLElement | null;
+    closeRef.current?.focus();
+    return () => { prev?.focus?.(); };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -70,10 +79,11 @@ export function QRModal({ url, template, label = 'QR CODE' }: Props) {
           >
             <canvas ref={canvasRef} />
             <button
+              ref={closeRef}
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close"
-              className="text-[#0A0A0B] hover:opacity-70"
+              className="text-ink hover:opacity-70"
             >
               <CloseIcon />
             </button>

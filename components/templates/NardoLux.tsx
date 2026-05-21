@@ -73,6 +73,7 @@ export function NardoLux({ card, url }: Props) {
             variant="primary"
             template="lux"
             label={t('SAVE_TO_CONTACTS', locale)}
+            ariaLabel={`Download contact card for ${c.name}`}
             icon={<DownloadIcon />}
             href={`/${card.slug}/contact.vcf`}
           />

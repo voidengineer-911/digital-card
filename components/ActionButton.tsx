@@ -7,6 +7,7 @@ type CommonProps = {
   variant: Variant;
   template: Template;
   label: string;
+  ariaLabel?: string;
   icon?: React.ReactNode;
   className?: string;
 };
@@ -29,8 +30,9 @@ const STYLES: Record<Template, Record<Variant, string>> = {
 };
 
 export function ActionButton(props: Props) {
-  const { variant, template, label, icon, className = '' } = props;
+  const { variant, template, label, ariaLabel, icon, className = '' } = props;
   const cls = `w-full rounded-pill flex items-center justify-center gap-3 px-6 transition-all duration-[180ms] ease-in-out active:scale-[0.98] ${STYLES[template][variant]} ${className}`;
+  const accessibleLabel = ariaLabel ?? label;
 
   const content = (
     <>
@@ -40,7 +42,7 @@ export function ActionButton(props: Props) {
   );
 
   if ('href' in props && props.href) {
-    return <a href={props.href} className={cls} aria-label={label}>{content}</a>;
+    return <a href={props.href} className={cls} aria-label={accessibleLabel}>{content}</a>;
   }
-  return <button type="button" onClick={props.onClick} className={cls} aria-label={label}>{content}</button>;
+  return <button type="button" onClick={props.onClick} className={cls} aria-label={accessibleLabel}>{content}</button>;
 }
