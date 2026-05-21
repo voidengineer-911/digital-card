@@ -1,0 +1,7 @@
+title = "digital-card gitleaks config"
+[allowlist]
+description = "Project-wide allowlist"
+paths = [
+  ".github/workflows/.*",
+  "node_modules/.*",
+]
