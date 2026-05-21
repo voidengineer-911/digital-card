@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Template {
+  lux
+  force
+}
+
+enum Brand {
+  force_ai
+  force_media
+}
+
+enum Locale {
+  en
+  ar
+}
+
+model Card {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  template      Template
+  brand         Brand?
+  defaultLocale Locale
+  enName        String
+  enTitle       String
+  arName        String
+  arTitle       String
+  photoUrl      String
+  phone         String?
+  phoneDisplay  String?
+  whatsapp      String?
+  emails        String[]
+  websites      String[]
+  instagram     String?
+  linkedin      String?
+  x             String?
+  github        String?
+  youtube       String?
+  tiktok        String?
+  copyrightYear Int      @default(2026)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([slug])
+}
