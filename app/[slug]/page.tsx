@@ -8,10 +8,15 @@ import { JsonLdPerson } from '@/components/JsonLd';
 type Params = { slug: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
-  const rows = await prisma.card.findMany({ select: { slug: true } });
-  return rows.map((r) => ({ slug: r.slug }));
+  try {
+    const rows = await prisma.card.findMany({ select: { slug: true } });
+    return rows.map((r) => ({ slug: r.slug }));
+  } catch {
+    // Local Node 25 Neon WebSocket ETIMEDOUT quirk — fall back to dynamic rendering
+    return [];
+  }
 }
-export const dynamicParams = false;
+export const dynamicParams = true;
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
