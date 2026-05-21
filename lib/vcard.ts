@@ -64,17 +64,7 @@ export async function buildVCard(card: Card): Promise<string> {
   const photoBase64 = await fetchPhotoBase64(card.photoUrl);
   if (photoBase64) {
     const line = 'PHOTO;ENCODING=b;TYPE=JPEG:' + photoBase64;
-    if (line.length <= 75) {
-      lines.push(line);
-    } else {
-      const folded: string[] = [];
-      let i = 0;
-      while (i < line.length) {
-        folded.push((i === 0 ? '' : ' ') + line.slice(i, i + 75));
-        i += 75;
-      }
-      lines.push(folded.join(CRLF));
-    }
+    lines.push(foldLine(line));
   }
 
   if (card.contact.phone) {
