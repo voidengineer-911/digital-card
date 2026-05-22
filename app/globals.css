@@ -9,9 +9,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--next-font-sans), system-ui, sans-serif;
+  --font-serif: var(--next-font-serif), serif;
   --font-arabic: var(--next-font-arabic), system-ui, sans-serif;
-  /* font-serif kept as alias of sans — Bodoni Moda retired, Gotham takes the spot */
-  --font-serif: var(--next-font-sans), system-ui, sans-serif;
 
   /* Nardo Lux palette */
   --color-ink: #0A0A0B;
