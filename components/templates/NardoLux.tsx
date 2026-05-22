@@ -6,7 +6,7 @@ import { SocialIconRow } from '@/components/SocialIconRow';
 import { LocaleToggle } from '@/components/LocaleToggle';
 import { ShareButton } from '@/components/ShareButton';
 import { QRModal } from '@/components/QRModal';
-import { t } from '@/lib/i18n';
+import { t, toArabicDigits } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale-context';
 import { PhoneIcon, WhatsAppIcon, MailIcon, SMSIcon, DownloadIcon } from '@/components/icons';
 
@@ -51,7 +51,7 @@ export function NardoLux({ card, url }: Props) {
         <h1
           className={
             locale === 'ar'
-              ? 'font-bold text-[56px] leading-[1.25] text-ink mb-3 text-center'
+              ? 'font-bold text-[64px] leading-[1.25] text-ink mb-3 text-center'
               : 'font-serif italic text-[48px] leading-[1.05] tracking-[-0.02em] text-ink mb-2 text-center'
           }
         >
@@ -63,7 +63,7 @@ export function NardoLux({ card, url }: Props) {
         <p
           className={
             locale === 'ar'
-              ? 'font-medium text-[24px] leading-[1.5] mb-10 text-center'
+              ? 'font-medium text-[28px] leading-[1.5] mb-10 text-center'
               : 'font-medium text-[12px] uppercase mb-8 text-center'
           }
           style={
@@ -93,7 +93,7 @@ export function NardoLux({ card, url }: Props) {
             <ActionButton
               variant="secondary"
               template="lux"
-              label={`${t('CALL', locale)} ${card.contact.phoneDisplay ?? tel}`}
+              label={`${t('CALL', locale)} ${locale === 'ar' ? toArabicDigits(card.contact.phoneDisplay ?? tel) : (card.contact.phoneDisplay ?? tel)}`}
               icon={<PhoneIcon />}
               href={`tel:${tel}`}
             />

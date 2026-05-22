@@ -18,3 +18,10 @@ export function t(key: StringKey, locale: Locale): string {
   if (!entry) return key;
   return entry[locale];
 }
+
+// Convert Western Arabic numerals (0-9) → Eastern Arabic-Indic (٠-٩).
+// Non-digit characters (+, spaces, etc.) pass through unchanged.
+const EASTERN = '٠١٢٣٤٥٦٧٨٩';
+export function toArabicDigits(s: string): string {
+  return s.replace(/[0-9]/g, (d) => EASTERN[Number(d)]);
+}

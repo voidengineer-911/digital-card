@@ -8,7 +8,7 @@ import { ShareButton } from '@/components/ShareButton';
 import { QRModal } from '@/components/QRModal';
 import { FalconF } from '@/components/FalconF';
 import { PhoneIcon, WhatsAppIcon, MailIcon, SMSIcon, DownloadIcon } from '@/components/icons';
-import { t } from '@/lib/i18n';
+import { t, toArabicDigits } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale-context';
 
 const ORANGE = '#FF7700';
@@ -50,7 +50,7 @@ export function ForceBrand({ card, url }: Props) {
           <span
             className={
               locale === 'ar'
-                ? 'text-[22px] font-semibold text-center leading-[1.4]'
+                ? 'text-[28px] font-semibold text-center leading-[1.4]'
                 : 'text-[12px] font-semibold uppercase tracking-wider-15'
             }
             style={{ color: ORANGE }}
@@ -66,7 +66,7 @@ export function ForceBrand({ card, url }: Props) {
         <h1
           className={
             locale === 'ar'
-              ? 'font-bold text-[48px] leading-[1.25] mb-3 text-center'
+              ? 'font-bold text-[56px] leading-[1.25] mb-3 text-center'
               : 'font-sans font-bold text-[36px] leading-[1.05] tracking-[-0.01em] mb-2 text-center'
           }
           style={{ color: CREAM }}
@@ -77,7 +77,7 @@ export function ForceBrand({ card, url }: Props) {
         <p
           className={
             locale === 'ar'
-              ? 'font-medium text-[26px] leading-[1.5] mb-10 text-center'
+              ? 'font-medium text-[30px] leading-[1.5] mb-10 text-center'
               : 'font-medium text-[14px] uppercase mb-8 text-center'
           }
           style={
@@ -103,7 +103,7 @@ export function ForceBrand({ card, url }: Props) {
         <div className="w-full flex flex-col gap-3 mb-10">
           {tel && (
             <ActionButton variant="secondary" template="force"
-              label={`${t('CALL', locale)} ${card.contact.phoneDisplay ?? tel}`}
+              label={`${t('CALL', locale)} ${locale === 'ar' ? toArabicDigits(card.contact.phoneDisplay ?? tel) : (card.contact.phoneDisplay ?? tel)}`}
               icon={<PhoneIcon color={ORANGE} />}
               href={`tel:${tel}`} />
           )}

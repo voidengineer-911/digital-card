@@ -51,11 +51,19 @@ html[lang="ar"] button,
 html[lang="ar"] select,
 html[lang="ar"] textarea {
   font-family: var(--font-arabic), system-ui, sans-serif;
-  /* Tharwat Ruqaa is ornamental; tracking on words (not letters — that severs joining)
-     gives breathing room. Bump body size too — Ruqaa reads small at default 16px. */
-  word-spacing: 0.18em;
-  font-size: 18px;
-  line-height: 1.55;
+  /* Tharwat Ruqaa is ornamental + needs breathing room. word-spacing OK
+     (between words); letter-spacing would sever joining. */
+  word-spacing: 0.22em;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+/* Action button labels need a bigger floor in AR — Tailwind text-[14px] on pills
+   reads tiny at Ruqaa's optical density. Selector specificity (lang + class)
+   beats the Tailwind utility cleanly without !important. */
+html[lang="ar"] .rounded-pill {
+  font-size: 19px;
+  line-height: 1.45;
 }
 
 @layer base {
