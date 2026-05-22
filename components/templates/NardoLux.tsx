@@ -132,7 +132,7 @@ export function NardoLux({ card, url }: Props) {
         {/* Footer — Nardo grey text */}
         <footer className="flex flex-col items-center gap-1 text-[11px]" style={{ color: NARDO }}>
           <span>© {card.copyrightYear} {c.name}</span>
-          <span className="text-[10px] font-medium uppercase tracking-wider-15">{t('BY_FORCE_AI', locale)}</span>
+          <span className="text-[10px] font-medium uppercase tracking-wider-15">{t('POWERED_BY_FORCE_AI', locale)}</span>
         </footer>
       </main>
     </div>

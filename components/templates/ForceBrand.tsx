@@ -8,16 +8,16 @@ import { ShareButton } from '@/components/ShareButton';
 import { QRModal } from '@/components/QRModal';
 import { FalconF } from '@/components/FalconF';
 import { PhoneIcon, WhatsAppIcon, MailIcon, SMSIcon, DownloadIcon } from '@/components/icons';
-import { t, type StringKey } from '@/lib/i18n';
+import { t } from '@/lib/i18n';
 import { useLocale } from '@/lib/locale-context';
 
 const ORANGE = '#FF7700';
 const CREAM  = '#ECECEC';
 const WINE   = '#2D1418';
 
-const BRAND_LABEL: Record<string, { wordmark: string; footerOrg: string; byKey: StringKey }> = {
-  'force-ai':    { wordmark: 'FORCE AI',    footerOrg: 'Force AI · Kuwait',    byKey: 'BY_FORCE_AI' },
-  'force-media': { wordmark: 'FORCE MEDIA', footerOrg: 'Force Media · Kuwait', byKey: 'BY_FORCE_MEDIA' },
+const BRAND_LABEL: Record<string, { wordmark: string; footerOrg: string }> = {
+  'force-ai':    { wordmark: 'FORCE AI',    footerOrg: 'Force AI · Kuwait' },
+  'force-media': { wordmark: 'FORCE MEDIA', footerOrg: 'Force Media · Kuwait' },
 };
 
 type Props = { card: Card; url: string };
@@ -107,7 +107,7 @@ export function ForceBrand({ card, url }: Props) {
 
         <footer className="flex flex-col items-center gap-1 text-[11px] text-center" style={{ color: 'rgba(236,236,236,0.6)' }}>
           <span>© {card.copyrightYear} {brand.footerOrg}</span>
-          <span className="text-[10px] font-medium uppercase tracking-wider-15">{t(brand.byKey, locale)}</span>
+          <span className="text-[10px] font-medium uppercase tracking-wider-15">{t('POWERED_BY_FORCE_AI', locale)}</span>
         </footer>
       </main>
     </div>

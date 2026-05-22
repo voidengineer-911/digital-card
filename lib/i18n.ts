@@ -7,8 +7,7 @@ const STRINGS = {
   SEND_SMS:         { en: 'Send SMS',          ar: 'رسالة نصية' },
   SHARE:            { en: 'SHARE',             ar: 'مشاركة' },
   QR_CODE:          { en: 'QR CODE',           ar: 'رمز QR' },
-  BY_FORCE_AI:      { en: 'BY FORCE AI',       ar: 'بواسطة فورس إيه آي' },
-  BY_FORCE_MEDIA:   { en: 'BY FORCE MEDIA',    ar: 'بواسطة فورس ميديا' },
+  POWERED_BY_FORCE_AI: { en: 'POWERED BY FORCE AI', ar: 'مدعوم بواسطة فورس إيه آي' },
   CLOSE:            { en: 'Close',             ar: 'إغلاق' },
 } as const;
 
