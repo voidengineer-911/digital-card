@@ -47,8 +47,15 @@ export function NardoLux({ card, url }: Props) {
           <Photo src={card.photoUrl} alt={c.name} size={96} rounded="full" />
         </div>
 
-        {/* Name — serif italic large */}
-        <h1 className="font-serif italic text-[48px] leading-[1.05] tracking-[-0.02em] text-ink mb-2 text-center">
+        {/* Name — Gotham Bold (EN) / Tharwat Emara Ruqaa (AR via lang selector).
+            Arabic Ruqaa is denser → use a slightly smaller px size for visual parity. */}
+        <h1
+          className={
+            locale === 'ar'
+              ? 'font-bold text-[44px] leading-[1.15] text-ink mb-2 text-center'
+              : 'font-bold text-[48px] leading-[1.05] tracking-[-0.02em] text-ink mb-2 text-center'
+          }
+        >
           {c.name}
         </h1>
 

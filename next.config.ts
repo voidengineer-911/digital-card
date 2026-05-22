@@ -3,8 +3,8 @@ import type { NextConfig } from 'next';
 const csp = [
   "default-src 'self'",
   "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
   "script-src 'self' 'unsafe-inline'",
   "connect-src 'self'",
   "frame-ancestors 'none'",
