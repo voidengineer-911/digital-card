@@ -1,7 +1,11 @@
+# RETIRED 2026-06-08: per-commit Neon snapshot branches drove branch-count cost
+# (stale prod-<sha> branches accumulating past the free-tier 10-branch cap).
+# DR is now daily local pg_dump via launchd com.forceai.neon-backup.
+# See docs/ROLLBACK.md §4 for the restore procedure.
 name: neon-snapshot
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+    # manually disabled — no longer triggered on push
 jobs:
   snapshot:
     runs-on: ubuntu-latest
