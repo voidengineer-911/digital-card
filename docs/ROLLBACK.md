@@ -1,6 +1,6 @@
 # Rollback Guide
 
-Three paths, fastest first.
+Four paths, fastest first.
 
 ## 1. Vercel instant rollback (≤30 s)
 Open Vercel → Project: digital-card → Deployments → pick a previous green deploy → "Promote to Production". No git changes; the previous artifact serves immediately.
@@ -11,28 +11,34 @@ Open Vercel → Project: digital-card → Deployments → pick a previous green 
 ```
 Refuses to run with uncommitted changes. Reverts HEAD and pushes; Vercel auto-redeploys.
 
-## 3. Content backup (≤5 min)
-Static content lives in `data/` + `public/photos/`. Local snapshots at `~/Desktop/projects/_backups/digital-card/` keep the last 30 commits.
+## 3. DB backup restore (≤5 min)
+Card content lives in Neon Postgres; photos live in Vercel Blob. Daily local pg_dump backups are taken automatically by launchd (`com.forceai.neon-backup`) and stored at `~/Desktop/projects/_backups/digital-card/` (30-day retention).
 
-To restore:
+To restore from a local dump:
 ```
-tar -xzf ~/Desktop/projects/_backups/digital-card/<file>.tar.gz
+pg_restore -d "$DATABASE_URL" ~/Desktop/projects/_backups/digital-card/<file>.dump
 ```
-Then commit + push.
+Then redeploy or trigger ISR revalidation as needed.
 
-## 4. Neon snapshot restore (for migration scenarios)
+> Note: `data/` and `public/photos/` directories were removed in v2; content is no longer stored in git.
 
-Each push to `main` triggers the `neon-snapshot` workflow, which creates a `prod-<short-sha>` Neon branch capturing prod data state at that commit. To restore:
+## 4. Neon point-in-time restore (for migration scenarios)
 
-1. In Neon dashboard → digital-card → Branches, pick the `prod-<sha>` branch corresponding to the desired commit.
-2. Promote it to primary (`neonctl branches set-primary --project-id green-shadow-14491887 <branch>`) OR copy the `DATABASE_URL` from that branch and set it as a Vercel env override, then redeploy.
-3. Run `npx prisma migrate deploy` against the new URL to ensure schema is consistent.
+> **Note (2026-06-08):** The per-commit `prod-<sha>` Neon snapshot workflow (`neon-snapshot.yml`) has been **retired** fleet-wide due to branch-accumulation cost. The workflow file is disabled. DR is now daily local pg_dump (see §3 above).
+
+For schema + data rollback after a bad migration:
+
+1. Identify the last-good local dump at `~/Desktop/projects/_backups/digital-card/`.
+2. Restore to a fresh Neon branch:
+   ```
+   neonctl branches create --project-id green-shadow-14491887 --name recovery-<date>
+   pg_restore -d "<recovery-branch-url>" ~/Desktop/projects/_backups/digital-card/<file>.dump
+   ```
+3. Point production at the recovery branch by updating `DATABASE_URL` + `DIRECT_URL` in Vercel env vars, then redeploy.
+4. Run `npx prisma migrate deploy` if the target schema differs.
+5. Delete the recovery branch once stable to stay within the free-tier 10-branch cap.
 
 **When to use:** if HEAD ran a Prisma migration that altered prod data and you want both schema AND data rolled back. Code-only rollback (`./scripts/rollback.sh`) does NOT undo schema changes.
-
-**Branch hygiene:** the snapshot workflow auto-prunes to keep newest 8 `prod-<sha>` branches. Total Neon branches stay ≤ 10 (`main` + `preview` + ≤ 8 snapshots) — within the free-tier 10-branch cap.
-
-**Required secrets:** `NEON_API_KEY` + `NEON_PROJECT_ID` must be set in GitHub repo secrets. If missing, the workflow exits 0 with a skip message (no snapshot created). Create an API key at https://console.neon.tech/app/settings/api-keys.
 
 ## Notes
 - HEAD git author email must be `ahmed0montaser@gmail.com` for every push (Vercel Hobby rule).
