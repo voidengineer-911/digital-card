@@ -51,37 +51,49 @@ async function resolveIPv4(hostname: string): Promise<string> {
 }
 
 async function main() {
-  const photoPath = path.join(process.cwd(), 'public', 'photos', 'ahmad.jpg');
-  const photoBuf = await fs.readFile(photoPath);
+  // photoUrl is NOT NULL in the schema. In prod we upload the real photo to Vercel
+  // Blob; in CI / local without BLOB_READ_WRITE_TOKEN we use a placeholder (e2e asserts
+  // card text, never the image src) so seeding needs no Blob credential.
+  let photoUrl: string;
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const photoPath = path.join(process.cwd(), 'public', 'photos', 'ahmad.jpg');
+    const photoBuf = await fs.readFile(photoPath);
+    console.log('uploading photo to Vercel Blob...');
+    photoUrl = await uploadCardPhoto('ahmad', photoBuf, 'image/jpeg');
+    console.log('photo →', photoUrl);
+  } else {
+    photoUrl = process.env.SEED_PLACEHOLDER_PHOTO_URL ?? 'https://placehold.co/400x400.png';
+    console.log('no BLOB_READ_WRITE_TOKEN — placeholder photo:', photoUrl);
+  }
 
-  console.log('uploading photo to Vercel Blob...');
-  const photoUrl = await uploadCardPhoto('ahmad', photoBuf, 'image/jpeg');
-  console.log('photo →', photoUrl);
-
-  // Resolve hostname to IPv4 explicitly — works around Node 25 Happy Eyeballs
-  // ETIMEDOUT bug where concurrent IPv4+IPv6 attempts all time out together.
   const rawUrl = process.env.DIRECT_URL!;
   const parsed = new URL(rawUrl);
   const hostname = parsed.hostname;
-  const ipv4 = await resolveIPv4(hostname);
-  console.log(`resolved ${hostname} → ${ipv4}`);
+  const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+  // Neon needs explicit IPv4 resolution (Node 25 Happy-Eyeballs ETIMEDOUT workaround)
+  // + TLS-by-IP with an SNI override. A local postgres service container (CI) is plain
+  // TCP — no DNS lookup, no TLS — so branch on the host.
+  const host = isLocal ? hostname : await resolveIPv4(hostname);
+  if (!isLocal) console.log(`resolved ${hostname} → ${host}`);
 
   const client = new Client({
-    host: ipv4,
-    port: 5432,
+    host,
+    port: parsed.port ? Number(parsed.port) : 5432,
     user: parsed.username,
     password: parsed.password,
     database: parsed.pathname.slice(1),
-    ssl: {
-      rejectUnauthorized: false,
-      // SNI must match the Neon host for TLS to succeed when connecting by IP
-      servername: hostname,
-    },
+    ssl: isLocal
+      ? false
+      : {
+          rejectUnauthorized: false,
+          // SNI must match the Neon host for TLS to succeed when connecting by IP
+          servername: hostname,
+        },
     connectionTimeoutMillis: 15000,
   });
 
   await client.connect();
-  console.log('connected to Neon via TCP');
+  console.log(`connected to ${isLocal ? 'local postgres' : 'Neon'} via TCP`);
 
   for (const src of [ahmad, ahmadFm]) {
     const template = src.template === 'lux' ? 'lux' : 'force';
