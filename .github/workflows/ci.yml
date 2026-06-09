@@ -121,7 +121,7 @@ jobs:
       - name: Generate CI admin password hash (scrypt — matches lib/admin-auth.ts)
         run: |
           node -e 'const c=require("crypto");const s=c.randomBytes(16);const h=c.scryptSync(process.env.PLAYWRIGHT_ADMIN_PASSWORD,s,64);require("fs").appendFileSync(process.env.GITHUB_ENV,`ADMIN_PASSWORD_HASH=${s.toString("hex")}:${h.toString("hex")}\n`)'
-      - name: Seed the service DB (cards: ahmad, ahmad-fm)
+      - name: Seed the service DB (ahmad + ahmad-fm cards)
         run: npm run db:seed
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
