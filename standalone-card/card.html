@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<title>Ahmad Sharaf — Digital Card</title>
+<meta name="hz:slide-selector" content=".card" />
+<meta name="hz:canvas-width" content="1080" />
+<meta name="hz:canvas-height" content="1920" />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&family=Tajawal:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; }
+.card{
+  position:relative; width:1080px; height:1920px; overflow:hidden;
+  background:#000000; color:#F4F4F8;
+  font-family:'Space Grotesk',sans-serif;
+  display:flex; flex-direction:column; padding:104px 92px 96px;
+}
+.card::before{ content:""; position:absolute; inset:0; z-index:0;
+  background:
+    radial-gradient(720px 560px at 14% 4%, rgba(255,255,255,.09), transparent 70%),
+    radial-gradient(820px 680px at 92% 100%, rgba(255,110,1,.14), transparent 68%);}
+.grid{position:absolute; inset:0; z-index:0; opacity:.5;
+  background-image:linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size:100% 80px; -webkit-mask-image:linear-gradient(#000,transparent 70%,#000);}
+.edge{position:absolute; inset:34px; border:1px solid rgba(255,255,255,.10); border-radius:34px; z-index:1;}
+.faf path{fill:#ff6e01;}
+.z{position:relative; z-index:3;}
+
+/* top row */
+.top{display:flex; align-items:center; justify-content:space-between;}
+.emblem{display:flex; align-items:center; gap:20px;}
+.emblem .xm{height:56px; width:auto; filter:drop-shadow(0 0 16px rgba(255,255,255,.14));}
+.emblem .x{color:#5c5c68; font-weight:400; font-size:40px;}
+.emblem .faf{height:52px; width:auto; filter:drop-shadow(0 0 18px rgba(255,110,1,.35));}
+.tag{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:24px; letter-spacing:.14em;
+  text-transform:uppercase; color:#0A0A0F; background:#fff; padding:12px 24px; border-radius:100px;}
+
+/* hero */
+.hero{margin-top:118px;}
+.eyebrow{font-weight:600; font-size:28px; letter-spacing:.24em; text-transform:uppercase; color:#8f8f8f;}
+.eyebrow .dot{display:inline-block; width:13px; height:13px; border-radius:50%; background:#ff6e01;
+  box-shadow:0 0 16px #ff6e01; margin-inline-end:14px; vertical-align:middle;}
+.name{margin-top:30px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:150px;
+  line-height:.98; letter-spacing:-.03em; color:#FFFFFF;}
+.name .sur{background:linear-gradient(100deg,#ffffff 0%,#c6c6c6 50%,#8f8f8f 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+.name-ar{margin-top:20px; font-family:'Cairo',sans-serif; font-weight:700; font-size:52px;
+  color:#6f6f7a; direction:rtl;}
+.role{margin-top:34px; font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:39px;
+  line-height:1.4; color:#B7B7C7;}
+.role b{color:#fff; font-weight:600;}
+
+/* ventures */
+.ventures{margin-top:auto; display:flex; flex-direction:column; gap:26px;}
+.vlabel{font-weight:600; font-size:24px; letter-spacing:.2em; text-transform:uppercase; color:#6a6a74; margin-bottom:6px;}
+.v{display:flex; align-items:center; gap:36px; padding:38px 40px;
+  border:1px solid rgba(255,255,255,.12); border-radius:26px; background:rgba(255,255,255,.028);}
+.v.orange{border-color:rgba(255,110,1,.42); background:rgba(255,110,1,.06);}
+.v .mk{width:120px; display:flex; align-items:center; justify-content:center; flex:0 0 120px;}
+.v .mk img{height:82px; width:auto;}
+.v .mk .faf{height:76px; width:auto; filter:drop-shadow(0 0 20px rgba(255,110,1,.4));}
+.v .txt{display:flex; flex-direction:column; gap:9px; flex:1;}
+.v .vt{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:56px; letter-spacing:-.02em; color:#fff; line-height:1;}
+.v .vs{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:27px; letter-spacing:.12em; text-transform:uppercase; color:#8f8f8f;}
+.v .vlink{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:32px; color:#C7C7D4; margin-top:4px;}
+.v.orange .vlink{color:#ff8a3d;}
+
+/* footer */
+.foot{margin-top:56px; display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,.10); padding-top:40px;}
+.foot .contact{display:flex; flex-direction:column; gap:8px;}
+.foot .contact .l{font-family:'Space Grotesk',sans-serif; font-weight:500; font-size:32px; color:#EDEDED;}
+.foot .contact .s{font-family:'Space Grotesk',sans-serif; font-weight:400; font-size:26px; color:#6a6a74; letter-spacing:.02em;}
+.foot .slogan{font-family:'Tajawal',sans-serif; font-weight:500; font-size:29px; color:#8f8f8f; text-align:right; direction:rtl; max-width:470px; line-height:1.45; white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="grid"></div>
+  <div class="edge"></div>
+
+  <header class="top z">
+    <div class="emblem">
+      <img class="xm" src="logo-mark.png" alt="mypovonai" />
+      <span class="x">✕</span>
+      <svg class="faf" viewBox="0 0 308 261.46" aria-label="Force AI"><path d="M165.71,85.77c11.27.6,22.03-2.39,31.24-4,8.4-1.46,15.88-1.77,14.1,2.8-4.3,11-17.34,6.92-17.34,6.92,0,0-54.28-8.19-67.04,12.38-12.77,20.57,22.09,40.95,22.09,40.95,2.29-16.95,11.62-15.05,11.62-15.05h22.29c66.47,0,72.44,66.16,72.44,66.16,0,0-73.9-.89-99.54-.89s-34.05,23.24-34.05,23.24c0,0-9.52,23.62-13.2,34.29-3.69,10.67-9.84,8.76-9.84,8.76H0s44.8-112.7,71.27-180.54c10.66,13.39,17.03,30.34,17.03,48.78,0-21.66,8.78-41.26,22.97-55.45s33.79-22.97,55.44-22.97c-21.65,0-41.25-8.78-55.44-22.96-2.43-2.43-4.7-5.01-6.78-7.74C129.45-2.1,159.24.06,159.24.06h148.76c-19.81,49.91-51.37,63.05-90.6,62.92-39.24-.13-51.69,22.79-51.69,22.79Z"/><path d="M88.3,101.63h0c0-27.88-22.6-50.48-50.48-50.48h0c27.88,0,50.48-22.6,50.48-50.48h0c0,27.88,22.6,50.48,50.48,50.48h0c-27.88,0-50.48,22.6-50.48,50.48Z"/></svg>
+    </div>
+    <span class="tag">Digital Card</span>
+  </header>
+
+  <section class="hero z">
+    <div class="eyebrow"><span class="dot"></span>Founder · AI Builder</div>
+    <h1 class="name">Ahmad<br><span class="sur">Sharaf</span></h1>
+    <div class="name-ar">أحمد شرف</div>
+    <p class="role"><b>Founder</b>, Force AI &nbsp;·&nbsp; <b>Creator</b>, mypovonai</p>
+  </section>
+
+  <section class="ventures z">
+    <div class="vlabel">Ventures</div>
+    <div class="v">
+      <div class="mk"><img src="logo-mark.png" alt="mypovonai" /></div>
+      <div class="txt">
+        <div class="vt">mypovonai</div>
+        <div class="vs">AI From My POV</div>
+        <div class="vlink">@mypovonai</div>
+      </div>
+    </div>
+    <div class="v orange">
+      <div class="mk"><svg class="faf" viewBox="0 0 308 261.46" aria-label="Force AI"><path d="M165.71,85.77c11.27.6,22.03-2.39,31.24-4,8.4-1.46,15.88-1.77,14.1,2.8-4.3,11-17.34,6.92-17.34,6.92,0,0-54.28-8.19-67.04,12.38-12.77,20.57,22.09,40.95,22.09,40.95,2.29-16.95,11.62-15.05,11.62-15.05h22.29c66.47,0,72.44,66.16,72.44,66.16,0,0-73.9-.89-99.54-.89s-34.05,23.24-34.05,23.24c0,0-9.52,23.62-13.2,34.29-3.69,10.67-9.84,8.76-9.84,8.76H0s44.8-112.7,71.27-180.54c10.66,13.39,17.03,30.34,17.03,48.78,0-21.66,8.78-41.26,22.97-55.45s33.79-22.97,55.44-22.97c-21.65,0-41.25-8.78-55.44-22.96-2.43-2.43-4.7-5.01-6.78-7.74C129.45-2.1,159.24.06,159.24.06h148.76c-19.81,49.91-51.37,63.05-90.6,62.92-39.24-.13-51.69,22.79-51.69,22.79Z"/><path d="M88.3,101.63h0c0-27.88-22.6-50.48-50.48-50.48h0c27.88,0,50.48-22.6,50.48-50.48h0c0,27.88,22.6,50.48,50.48,50.48h0c-27.88,0-50.48,22.6-50.48,50.48Z"/></svg></div>
+      <div class="txt">
+        <div class="vt">Force AI</div>
+        <div class="vs">AI-First Software Company</div>
+        <div class="vlink">force-ai.co</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot z">
+    <div class="contact">
+      <div class="l">force-ai.co</div>
+      <div class="s">@mypovonai · AI FROM MY POV</div>
+    </div>
+    <div class="slogan">الذكاء الاصطناعي… من وجهة نظري</div>
+  </footer>
+</div>
+
+</body>
+</html>

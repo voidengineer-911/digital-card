@@ -1,0 +1,12 @@
+name = "force-card"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+
+[[routes]]
+pattern = "card.force-ai.co/*"
+zone_name = "force-ai.co"
