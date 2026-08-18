@@ -66,6 +66,7 @@
     "sharp": "^0.35.0",
     "@vercel/blob": {
       "undici": "^6.27.0"
-    }
+    },
+    "deepmerge-ts": "^8.0.0"
   }
 }
