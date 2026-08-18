@@ -11,6 +11,7 @@
  * causes ETIMEDOUT even when the IPs are individually reachable.
  */
 import dns from 'node:dns/promises';
+import { buildPgClientConfig, isLocalHostname } from '../lib/seed-pg-config';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import pg from 'pg';
@@ -67,30 +68,14 @@ async function main() {
   }
 
   const rawUrl = process.env.DIRECT_URL!;
-  const parsed = new URL(rawUrl);
-  const hostname = parsed.hostname;
-  const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
-  // Neon needs explicit IPv4 resolution (Node 25 Happy-Eyeballs ETIMEDOUT workaround)
-  // + TLS-by-IP with an SNI override. A local postgres service container (CI) is plain
-  // TCP — no DNS lookup, no TLS — so branch on the host.
-  const host = isLocal ? hostname : await resolveIPv4(hostname);
-  if (!isLocal) console.log(`resolved ${hostname} → ${host}`);
+  const hostname = new URL(rawUrl).hostname;
+  const isLocal = isLocalHostname(hostname);
+  // Neon needs explicit IPv4 resolution (Node 25 Happy-Eyeballs ETIMEDOUT
+  // workaround); a local postgres service container is plain TCP with no DNS.
+  const resolvedHost = isLocal ? hostname : await resolveIPv4(hostname);
+  if (!isLocal) console.log(`resolved ${hostname} → ${resolvedHost}`);
 
-  const client = new Client({
-    host,
-    port: parsed.port ? Number(parsed.port) : 5432,
-    user: parsed.username,
-    password: parsed.password,
-    database: parsed.pathname.slice(1),
-    ssl: isLocal
-      ? false
-      : {
-          rejectUnauthorized: false,
-          // SNI must match the Neon host for TLS to succeed when connecting by IP
-          servername: hostname,
-        },
-    connectionTimeoutMillis: 15000,
-  });
+  const client = new Client(buildPgClientConfig(rawUrl, resolvedHost));
 
   await client.connect();
   console.log(`connected to ${isLocal ? 'local postgres' : 'Neon'} via TCP`);
